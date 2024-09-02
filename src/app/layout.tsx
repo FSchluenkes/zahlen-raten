@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body style={{margin: '0px', padding: '0px', border: '0px'}}>
+        {children}
+      </body>
     </html>
   );
 }

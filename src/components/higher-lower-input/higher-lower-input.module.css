@@ -1,0 +1,20 @@
+.base {
+  width: 200px;
+  height: 100px;
+  border-width: 1px;
+  border-radius: 25px;
+  text-align: center;
+  font-size: 50px;
+}
+
+.main-input {
+  background-color: #fdfdfd;
+  border-color: #000;
+}
+
+.h_l_input {
+  position: absolute;
+  border-color: transparent;
+  background-color: transparent;
+  color: #000;
+}
