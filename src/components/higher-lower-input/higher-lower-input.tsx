@@ -13,7 +13,7 @@ export const HigherLowerInput = ({ number: number }: { number: number }) => {
   const [higher, setHigher] = useState<string[]>(["100"]);
   const [lower, setLower] = useState<string[]>(["0"]);
 
-  const mainInput = clsx(styles.base, styles.mainInput);
+  const mainInput = clsx(styles.base, styles.main_input);
   const hlInput = clsx(styles.base, styles.h_l_input);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +55,7 @@ export const HigherLowerInput = ({ number: number }: { number: number }) => {
   }, []);
 
   return (
-    <motion.div style={{ position: "relative" }}>
+    <motion.div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <AnimatePresence initial={false}>
         <motion.input
           className={mainInput}
@@ -72,13 +72,8 @@ export const HigherLowerInput = ({ number: number }: { number: number }) => {
               disabled={true}
               key={`h-${item}`}
               className={hlInput}
-              initial={{
-                bottom: 0,
-                left: 0,
-              }}
               animate={{
                 bottom: 50 * (index + 1) + 50,
-                left: 0,
               }}
             />
           );
@@ -91,13 +86,8 @@ export const HigherLowerInput = ({ number: number }: { number: number }) => {
               disabled={true}
               key={`l-${item}`}
               className={hlInput}
-              initial={{
-                top: 0,
-                left: 0,
-              }}
               animate={{
                 top: 50 * (index + 1) + 50,
-                left: 0,
               }}
             />
           );
