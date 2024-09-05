@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import styles from "./page.module.css";
 import { HigherLowerInput } from "@/components/higher-lower-input/higher-lower-input";
 

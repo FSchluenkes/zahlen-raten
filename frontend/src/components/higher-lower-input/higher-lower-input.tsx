@@ -4,12 +4,12 @@ import { useRef, useState, useEffect } from "react";
 import styles from "./higher-lower-input.module.css";
 import clsx from "clsx";
 
-export const HigherLowerInput = ({ number: number }: { number: number }) => {
+export const HigherLowerInput = ({ number }: { number: number }) => {
   
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState<string>("");
-  const [min, setMin] = useState<number>(1);
-  const [max, setMax] = useState<number>(99);
+  const [min, setMin] = useState<number>(1);      //Backend
+  const [max, setMax] = useState<number>(99);     //Backend
   const [higher, setHigher] = useState<string[]>(["100"]);
   const [lower, setLower] = useState<string[]>(["0"]);
 
