@@ -1,7 +1,7 @@
 from flask import Blueprint
 
-randomnumber = Blueprint("randomnumber",__name__)
+randomnumberBlueprint = Blueprint("randomnumber",__name__)
 
-@randomnumber.route("/")
-def randomnumer( ):
-    print("")
+@randomnumberBlueprint.route("/",  methods=['GET'])
+def rmnum():
+    return "Nichts"
