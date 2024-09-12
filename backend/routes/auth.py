@@ -3,22 +3,31 @@ from routes.db.connect_db import get_db_connection
 
 authBlueprint = Blueprint("auth",__name__)
 
-@authBlueprint.route("/register", methods=['POST'])
+@authBlueprint.route("/register", methods=['GET'])
 def register( ):
     connection = get_db_connection()
     cur = connection.cursor()
-    cur.execute("Insert into Users (Name, Created_At) Values(? , ?)",())
-    connection.commit()
-    connection.close()
+    username = request.args.get('user')
+    passwort = request.args.get('passwort')
+    cur.execute("Select ID from Users where name = :username",{"username":username} )
+    row_id = cur.fetchall()
+    if row_id:
+        return 'Name ist bereits vergegeben'
+    else:
+        cur.execute("Insert into Users (Name, Passwort) Values(? , ?)",(username, passwort))
+        connection.commit()
+        connection.close()
+        return 'Erfolgreich'
 
-@authBlueprint.route("/login", methods=['POST'])
+@authBlueprint.route("/login", methods=['GET'])
 def login( ):
     connection = get_db_connection()
     cur = connection.cursor()
-    username = request.args.get('User')
-    cur.execute("Select ID from Users where name = ?",(username))
+    username = request.args.get('user')
+    passwort = request.args.get('passwort')
+    cur.execute("Select ID from Users where name = ? and passwort = ?",(username, passwort))
     row_id = cur.fetchall()
-    if row_id is None:
-        print('No such user')
+    if not row_id:
+        return 'No such user'
     else:
-        print()
+        return 'Nice'
