@@ -1,5 +1,5 @@
-import sqlite3
 from flask import Blueprint, request
+from db.connect_db import get_db_connection
 
 authBlueprint = Blueprint("auth",__name__)
 
@@ -22,7 +22,3 @@ def login( ):
         print('No such user')
     else:
         print()
-
-def get_db_connection(): 
-    connection = sqlite3.connect('zahlen-raten.db')
-    return connection
