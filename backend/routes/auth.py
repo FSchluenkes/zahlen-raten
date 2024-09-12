@@ -12,7 +12,7 @@ def register( ):
     connection.close()
 
 @authBlueprint.route("/login", methods=['POST'])
-def register( ):
+def login( ):
     connection = get_db_connection()
     cur = connection.cursor()
     username = request.args.get('User')
@@ -22,7 +22,6 @@ def register( ):
         print('No such user')
     else:
         print()
-
 
 def get_db_connection(): 
     connection = sqlite3.connect('zahlen-raten.db')
