@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 import random
-from db.init_db import get_db_connection
+from routes.db.connect_db import get_db_connection
 
 randomnumberBlueprint = Blueprint("randomnumber",__name__)
 #authBlueprint         = Blueprint("auth")
@@ -8,15 +8,6 @@ randomnumberBlueprint = Blueprint("randomnumber",__name__)
 def store_random_number( pd_random_number ):
     ld_connection = get_db_connection( )
     #session id erzeugen  und mit random number speichern 
-    
-    cur = ld_connection.cursor()
-    username = request.args.get('User')
-    cur.execute("Select ID from Users where name = ?",(username))
-    row_id = cur.fetchall()
-    if row_id is None:
-        print('No such user')
-    else:
-        print()
     
     
     return "test"
