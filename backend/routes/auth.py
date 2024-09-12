@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from db.connect_db import get_db_connection
+from routes.db.connect_db import get_db_connection
 
 authBlueprint = Blueprint("auth",__name__)
 
