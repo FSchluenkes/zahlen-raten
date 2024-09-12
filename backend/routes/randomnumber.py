@@ -7,11 +7,13 @@ randomnumberBlueprint = Blueprint("randomnumber",__name__)
 
 def store_random_number( pd_random_number ):
     ld_connection = get_db_connection( )
-    #session id erzeugen  und mit random number speichern 
-    
-    
+    ld_cursor = ld_connection.cursor( )
+    ld_cursor.execute("""INSERT INTO Statistik (tries, correct_number) VALUES (?, ?)""", (0, pd_random_number) )
+   # ld_row_id = ld_cursor.lastrowid( )
+   # if ld_row_id is not None:
+   #     ld_connection.commit( )
+     
     return "test"
-    
     
 def get_random_number( ): 
     return random.randint(0, 100)
