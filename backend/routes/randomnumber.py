@@ -6,10 +6,27 @@ randomnumberBlueprint = Blueprint("randomnumber",__name__)
 
 # Speichern der Random-Nummer, sowie Rückgabe der SessionID 
 def store_random_number( pd_random_number ):
+    ld_username = request.args.get('user')
     ld_connection = get_db_connection( )
     ld_cursor = ld_connection.cursor( )
-    ld_cursor.execute("""INSERT INTO Statistik (tries, correct_number) VALUES (?, ?)""", (0, pd_random_number) )
-    ld_session_id = ld_cursor.lastrowid 
+    
+    #mit dem username nach ner userID suchen
+    ld_cursor.execute("""SELECT ID FROM Users WHERE name = :ld_username """,{ "ld_username":ld_username } )
+    ld_dataset = ld_cursor.fetchone( )
+    if ld_dataset is not None:
+        ld_user_id = ld_dataset[0]
+    else:
+        ld_user_id = None
+    
+    #Wenn es nen User gibt, direkt die zuordnung machen 
+    if  ld_user_id is not None:
+        ld_cursor.execute("""INSERT INTO Statistik (tries, correct_number, user_id) VALUES (?, ?, ?)""", (0, pd_random_number, ld_user_id) )
+        ld_session_id = ld_cursor.lastrowid
+    else: #Sonst nur Nummer speichern 
+        ld_cursor.execute("""INSERT INTO Statistik (tries, correct_number) VALUES (?, ?)""", (0, pd_random_number) )
+        ld_session_id = ld_cursor.lastrowid 
+        
+    #Session nummer gesichert? Dann Commit
     if ld_session_id is not None:
         ld_connection.commit()
      
@@ -51,14 +68,16 @@ def save_statistic(pf_correct_guess,
 # -------------------------------------------------------------------------------------------------------------------------------------
 # Start des Spiels, Erzeugung des Session-Datensatz
 @randomnumberBlueprint.route("/start_session",  methods=['GET'])
+
+#Es gilt noch zu klären, wie das Userhandling läuft. Gibt es immer einen Usernamen? Also auch für Gäste 
+#Und wo bekomme ich die Info her?  
+
 def start_session( ): 
     ld_rndm_nmbr = get_random_number( )
     ld_session_id = store_random_number(ld_rndm_nmbr)
     
     return jsonify({ "message": "Session erzeugt",
                      "session_id": ld_session_id })
-    
-#"Session erzeugt" + " " + str(ld_rndm_nmbr) + " " + str(ld_session_id)
     
 # Auswertung des Rateversuchs     
 @randomnumberBlueprint.route("/guess", methods=['GET'] )
@@ -80,12 +99,3 @@ def new_guess( ):
         save_statistic(0, ld_dataset[1], ld_session_id)
         return jsonify({"message":"lower", "session_id":ld_session_id, "tries":ld_tries}) 
         
-    
-# Methode zum erzeugen der Random-Nummer 
-# -> Start des Prozesses, merken der zugehörigen Sessions 
-# session objekt der flask anwendung baut einen zufälligen key, mit diesem kann das frontend sich dann die Daten wiederholen 
-
-
-
-# Methode zum Prüfen der neu eingegebenen Nummer
-# -> Korrekt, zu groß, zu klein 
