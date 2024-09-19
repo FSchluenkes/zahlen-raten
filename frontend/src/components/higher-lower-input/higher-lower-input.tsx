@@ -27,7 +27,7 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
       } else {
         setValue(inputValue);
         setMessage("");
-      }   
+      }
     } else {
       setMessage("Bitte gebe eine Zahl ein.");
     }
@@ -39,7 +39,7 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
         setMessage(`Die Zahl muss größer oder gleich ${min} sein.`);
       } else {
         if (+value > number) {
-          setHigher([ value, ...higher]);
+          setHigher([value, ...higher]);
           setMax(+value - 1);
           setValue("");
           setMessage(`${value} ist zu hoch. Versuche eine kleinere Zahl.`);
@@ -61,7 +61,14 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
 
   return (
     <div>
-      <motion.div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <motion.div
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <AnimatePresence initial={false}>
           <motion.input
             className={mainInput}
@@ -88,7 +95,7 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
               aria-label={`Zu hohe Vermutung: ${item}`}
             />
           ))}
-          
+
           {lower.map((item, index) => (
             <motion.input
               value={item}
@@ -104,7 +111,8 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
         </AnimatePresence>
       </motion.div>
       <div id="guess-description" className="sr-only">
-        Gib eine Zahl zwischen {min} und {max} ein und drücke Enter, um zu raten.
+        Gib eine Zahl zwischen {min} und {max} ein und drücke Enter, um zu
+        raten.
       </div>
       <div aria-live="polite" className="sr-only">
         {message}
