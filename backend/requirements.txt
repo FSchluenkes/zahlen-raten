@@ -1,0 +1,5 @@
+python -m venv /path/to/new/virtual/environment
+./env/Scripts/activate
+pip install flask
+pip install flask_sqlalchemy
+pip install flask_jwt_extended
