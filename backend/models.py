@@ -62,7 +62,7 @@ class Game(db.Model):
 
     @classmethod
     def guess(cls, game_id: str, number: int):
-        game: Game = cls.query.filter(game.id==game_id).scalar()
+        game: Game = cls.query.filter(cls.id==game_id).scalar()
         if game.finished:
             raise ValueError(f"Game with ID {game_id} is already finished")
         if game:
