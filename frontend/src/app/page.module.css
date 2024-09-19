@@ -9,4 +9,5 @@
   background-position: center;
   background-repeat: no-repeat;
   color: white;
+  z-index: -20;
 }

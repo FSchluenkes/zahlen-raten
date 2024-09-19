@@ -6,12 +6,13 @@ import { Box } from "@react-three/drei";
 import * as THREE from "three";
 import { MotionConfig } from "framer-motion";
 
-// Extend geometries and materials
 extend({
   BoxGeometry: THREE.BoxGeometry,
   Mesh: THREE.Mesh,
   MeshStandardMaterial: THREE.MeshStandardMaterial,
-  DirectionalLight : THREE.DirectionalLight
+  DirectionalLight: THREE.DirectionalLight,
+  AmbientLight: THREE.AmbientLight,
+  PointLight: THREE.PointLight,
 });
 
 const CubeMesh: React.FC = () => {
@@ -20,7 +21,7 @@ const CubeMesh: React.FC = () => {
   useFrame((state) => {
     if (meshRef.current) {
       const time = state.clock.getElapsedTime();
-      meshRef.current.position.y = Math.abs(Math.sin(time * 2)) * 2;
+      meshRef.current.position.y = Math.abs(Math.sin(time * 2)) * 2; 
       meshRef.current.rotation.x = time;
       meshRef.current.rotation.y = time * 0.5;
     }
@@ -29,12 +30,17 @@ const CubeMesh: React.FC = () => {
   return (
     <motion.mesh
       ref={meshRef}
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 1 }}
+      initial={{ x: -5, scale: 1, y: 10 }}
+      animate={{ x: 5, y: 0, scale: 1.5 }}
+      transition={{
+        duration: 2,
+        ease: "easeInOut",
+        repeat: Infinity,       
+        repeatType: "reverse", 
+      }}
     >
       <Box args={[1, 1, 1]}>
-        <meshStandardMaterial color="#8844aa" />
+        <meshStandardMaterial color="#FFFFFF"  />
       </Box>
     </motion.mesh>
   );
@@ -43,22 +49,15 @@ const CubeMesh: React.FC = () => {
 const ThreejsCube: React.FC = () => {
   return (
     <MotionConfig transition={{ type: "spring" }}>
-      <motion.div animate={{ scale: 1 }}>
+      <motion.div 
+        animate={{ scale: 1 }} 
+        className="absolute top-0 left-0 w-screen h-screen -z-0 overflow-hidden"
+      >
         <MotionCanvas camera={{ position: [0, 0, 5] }}>
-          {/* Ambient light for general brightness */}
           <ambientLight intensity={0.5} />
-
-          {/* Point light for dynamic lighting */}
           <pointLight position={[5, 5, 5]} intensity={1} />
-
-          {/* Directional light for direct light and shadow casting */}
-          <directionalLight
-            position={[2, 5, 5]}
-            intensity={0.8}
-            castShadow
-          />
-
-          {/* The animated Cube Mesh */}
+          <directionalLight position={[2, 5, 5]} intensity={0.8} castShadow />
+          
           <CubeMesh />
         </MotionCanvas>
       </motion.div>
