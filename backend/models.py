@@ -1,5 +1,6 @@
 from extensions import db
 from typing import Optional
+import json
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -25,6 +26,10 @@ class User(db.Model):
     @classmethod
     def get_user_by_name(cls, name:str):
         return cls.query.filter(cls.name==name).scalar()
+    
+    @classmethod
+    def get_name_by_user(cls, id:str):
+        return cls.query.filter(cls.id==id).scalar()
     
     def save(self):
         db.session.add(self)
@@ -81,6 +86,19 @@ class Game(db.Model):
         game.save()
         return msg
     
+    @classmethod
+    def leaderboard(cls):
+        games = cls.query.filter(cls.finished == True)
+        jgames = []
+        for game in games:
+            user: User = User.get_name_by_user(game.user_id)
+            if user:
+                jgames.append({"id": game.id, "name": user.name, "attempts": game.attempts, "score": game.number})
+            else: 
+                jgames.append({"id": game.id, "name": "No Username", "attempts": game.attempts, "score": game.number})
+        return jgames
+    
+
     def save(self):
         db.session.add(self)
         db.session.commit()
