@@ -10,7 +10,7 @@ from datetime import datetime
 class User(db.Model):
     __tablename__   = 'users'
     __table_args__  = {'extend_existing': True}
-    id:         Mapped[str] = mapped_column(primary_key=True, default=str(uuid4()))
+    id:         Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
     name:       Mapped[str] = mapped_column(nullable=False, unique=True) 
     password:   Mapped[str] = mapped_column(nullable=False)   
 
@@ -56,8 +56,8 @@ class TokenBlocklist(db.Model):
 class Game(db.Model):
     __tablename__   = 'game'
     __table_args__  = {'extend_existing': True}
-    id:         Mapped[str] = mapped_column(primary_key=True, default=str(uuid4()))
-    number:     Mapped[int] = mapped_column(default=int(random.randint(0, 100)))
+    id:         Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
+    number:     Mapped[int] = mapped_column(default=lambda: int(random.randint(0, 100)))
     attempts:   Mapped[int] = mapped_column(default=int(0))
     finished:   Mapped[bool] = mapped_column(default=False)
     user_id:    Mapped[Optional[str]]
@@ -88,14 +88,12 @@ class Game(db.Model):
     
     @classmethod
     def leaderboard(cls):
-        games = cls.query.filter(cls.finished == True)
+        games: list[Game] = cls.query.filter(cls.finished == True)
         jgames = []
         for game in games:
             user: User = User.get_name_by_user(game.user_id)
-            if user:
-                jgames.append({"id": game.id, "name": user.name, "attempts": game.attempts, "score": game.number})
-            else: 
-                jgames.append({"id": game.id, "name": "No Username", "attempts": game.attempts, "score": game.number})
+            jgames.append({"id": game.id, "name": user.name if user else "No Username", "attempts": game.attempts, "score": game.number})
+        
         return jgames
     
 
