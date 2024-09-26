@@ -118,7 +118,7 @@ class TestAuthGameApp(unittest.TestCase):
             'number': game.number - 1  
         })
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(b'higher' in response.data or b'lower' in response.data or b'win' in response.data, msg="Response did not contain 'higher', 'lower', or 'win'")
+        self.assertIn(b'higher', response.data)
 
         response = self.client.post('/game/guess', json={
             'game_id': game_id,
@@ -139,7 +139,7 @@ class TestAuthGameApp(unittest.TestCase):
 
         self.assertEqual(game.attempts, 3)
         self.assertEqual(game.finished, True)
-        
+
 if __name__ == '__main__':
     unittest.main()
 
