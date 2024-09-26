@@ -1,5 +1,6 @@
 from extensions import db
 from typing import Optional
+import json
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,7 +10,7 @@ from datetime import datetime
 class User(db.Model):
     __tablename__   = 'users'
     __table_args__  = {'extend_existing': True}
-    id:         Mapped[str] = mapped_column(primary_key=True, default=str(uuid4()))
+    id:         Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
     name:       Mapped[str] = mapped_column(nullable=False, unique=True) 
     password:   Mapped[str] = mapped_column(nullable=False)   
 
@@ -25,6 +26,10 @@ class User(db.Model):
     @classmethod
     def get_user_by_name(cls, name:str):
         return cls.query.filter(cls.name==name).scalar()
+    
+    @classmethod
+    def get_name_by_user(cls, id:str):
+        return cls.query.filter(cls.id==id).scalar()
     
     def save(self):
         db.session.add(self)
@@ -51,8 +56,8 @@ class TokenBlocklist(db.Model):
 class Game(db.Model):
     __tablename__   = 'game'
     __table_args__  = {'extend_existing': True}
-    id:         Mapped[str] = mapped_column(primary_key=True, default=str(uuid4()))
-    number:     Mapped[int] = mapped_column(default=int(random.randint(0, 100)))
+    id:         Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
+    number:     Mapped[int] = mapped_column(default=lambda: int(random.randint(0, 100)))
     attempts:   Mapped[int] = mapped_column(default=int(0))
     finished:   Mapped[bool] = mapped_column(default=False)
     user_id:    Mapped[Optional[str]]
@@ -81,6 +86,17 @@ class Game(db.Model):
         game.save()
         return msg
     
+    @classmethod
+    def leaderboard(cls):
+        games: list[Game] = cls.query.filter(cls.finished == True)
+        jgames = []
+        for game in games:
+            user: User = User.get_name_by_user(game.user_id)
+            jgames.append({"id": game.id, "name": user.name if user else "No Username", "attempts": game.attempts, "score": game.number})
+        
+        return jgames
+    
+
     def save(self):
         db.session.add(self)
         db.session.commit()

@@ -30,4 +30,13 @@ def guess():
         except Exception as e:
             return jsonify({"error": str(e)}), 400
     else:
-        return jsonify({"error": "No game_id provided"}), 400   
+        return jsonify({"error": "No game_id provided"}), 400 
+
+@game_bp.post('leaderboard')
+# @jwt_required(optional=True)
+def leaderboard():
+  games = Game.leaderboard()
+  if games:
+    return games 
+  else: 
+    return jsonify({"error": "No Games found"}), 400 
