@@ -27,7 +27,7 @@ const Header = () => {
                   className={clsx(
                     "flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors duration-200",
                     {
-                      " bg-defaultprimary p-2 rounded-xl text-white":
+                      " bg-defaultprimary p-2 rounded-xl bg-red-600 text-white":
                         pathname === item.href,
                     }
                   )}

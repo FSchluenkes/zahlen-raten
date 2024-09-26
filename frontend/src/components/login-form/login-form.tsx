@@ -3,45 +3,46 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { handleLogin, handleRegister } from "@/lib/client-auth";
 
-async function loginUser(username: string, password: string) {
-  const response = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Login failed");
-  }
-
-  return response.json();
-}
-
-export default function LoginForm() {
+export default function AuthForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+    isLogin: boolean
+  ) {
     event.preventDefault();
     setError(null);
     setIsLoading(true);
 
     try {
-      await loginUser(username, password);
+      if (isLogin) {
+        await handleLogin(username, password);
+      } else {
+        await handleRegister(username, password);
+      }
       setIsLoading(false);
       router.push("/guesser");
     } catch (err) {
       setIsLoading(false);
-      setError("Falscher Benutzername oder Passwort");
+      setError(
+        isLogin
+          ? "Falscher Benutzername oder Passwort"
+          : "Registrierung fehlgeschlagen"
+      );
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
+    <form
+      onSubmit={(e) => handleSubmit(e, true)}
+      className="space-y-4 w-full max-w-md"
+    >
       <div>
         <label
           htmlFor="username"
@@ -76,7 +77,7 @@ export default function LoginForm() {
           required
         />
       </div>
-      <div className="flex flex-row-reverse justify-center gap-12">
+      <div className="flex flex-row-reverse justify-center gap-4">
         <Button
           type="submit"
           disabled={!username || !password || isLoading}
@@ -87,10 +88,11 @@ export default function LoginForm() {
           {isLoading && <span className="ml-2 text-white">...</span>}
         </Button>
         <Button
-          type="submit"
+          type="button"
+          onClick={(e) => handleSubmit(e as any, false)}
           disabled={!username || !password || isLoading}
           aria-label="Registrieren"
-          className="w-full text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          className="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
         >
           Registrieren
           {isLoading && <span className="ml-2 text-white">...</span>}
