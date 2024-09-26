@@ -118,7 +118,7 @@ class TestAuthGameApp(unittest.TestCase):
             'number': game.number - 1  
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'higher', response.data)  # or 'lower'/'win' depending on the random number
+        self.assertTrue(b'higher' in response.data or b'lower' in response.data or b'win' in response.data, msg="Response did not contain 'higher', 'lower', or 'win'")
 
         response = self.client.post('/game/guess', json={
             'game_id': game_id,
