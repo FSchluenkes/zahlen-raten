@@ -115,7 +115,7 @@ class TestAuthGameApp(unittest.TestCase):
             'number': 50  # Arbitrary guess
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'higher', response.data)  # or 'lower'/'win' depending on the random number
+        self.assertTrue(b'higher' in response.data or b'lower' in response.data or b'win' in response.data, msg="Response did not contain 'higher', 'lower', or 'win'")
 
 if __name__ == '__main__':
     unittest.main()
