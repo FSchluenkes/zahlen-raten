@@ -3,7 +3,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from extensions import db
 from main import create_app  # Adjust the import based on your project structure
-from models import User, TokenBlocklist
+from models import User, TokenBlocklist, Game
 
 class TestAuthGameApp(unittest.TestCase):
     def setUp(self):
@@ -109,14 +109,37 @@ class TestAuthGameApp(unittest.TestCase):
         })
         game_id = start_response.get_json()['game_id']
 
+        with self.app.app_context():
+            game: Game = Game.query.filter(Game.id == game_id).scalar()
+
         # Make a guess (the guess should be within the range 0-100)
         response = self.client.post('/game/guess', json={
             'game_id': game_id,
-            'number': 50  # Arbitrary guess
+            'number': game.number - 1  
         })
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'higher', response.data)  # or 'lower'/'win' depending on the random number
 
+        response = self.client.post('/game/guess', json={
+            'game_id': game_id,
+            'number': game.number + 1  
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'lower', response.data)
+
+        response = self.client.post('/game/guess', json={
+            'game_id': game_id,
+            'number': game.number  
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'win', response.data)
+
+        with self.app.app_context():
+          game: Game = Game.query.filter(Game.id == game_id).scalar()
+
+        self.assertEqual(game.attempts, 3)
+        self.assertEqual(game.finished, True)
+        
 if __name__ == '__main__':
     unittest.main()
 

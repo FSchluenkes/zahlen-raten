@@ -3,3 +3,4 @@ python -m venv env
 pip install flask
 pip install flask_sqlalchemy
 pip install flask_jwt_extended
+pip install pytest
