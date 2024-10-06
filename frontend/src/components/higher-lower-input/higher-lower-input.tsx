@@ -4,8 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import styles from "./higher-lower-input.module.css";
 import clsx from "clsx";
+import { makeGuess } from "@/actions/flaskapi";
+import { useRouter } from "next/navigation";
 
-export const HigherLowerInput = ({ number }: { number: number }) => {
+export const HigherLowerInput = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState<string>("");
   const [min, setMin] = useState<number>(1);
@@ -13,6 +15,8 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
   const [higher, setHigher] = useState<string[]>(["100"]);
   const [lower, setLower] = useState<string[]>(["0"]);
   const [message, setMessage] = useState<string>("");
+
+  const router = useRouter();
 
   const mainInput = clsx(styles.base, styles.main_input);
   const hlInput = clsx(styles.base, styles.h_l_input);
@@ -33,25 +37,46 @@ export const HigherLowerInput = ({ number }: { number: number }) => {
     }
   };
 
+  const handleGuess = async () => {
+    
+    if (+value < min) {
+      setMessage(`Die Zahl muss größer oder gleich ${min} sein.`);
+    } else if (+value > max) {
+      setMessage(`Die Zahl muss kleiner oder gleich ${max} sein.`);
+    } else {
+        
+      const gameId = localStorage.getItem("game_id");
+
+      if (!gameId) {
+        setMessage("Bitte starte eine neue Runde.");
+        return;
+      }
+      const response = await makeGuess(gameId, +value);
+      console.log(response);
+      if (response.error) {
+        setMessage(response.error);
+        return;
+      } else if (response.result === "lower") {
+        setHigher([value, ...higher]);
+        setMax(+value - 1);
+        setValue("");
+        setMessage(`${value} ist zu hoch. Versuche eine kleinere Zahl.`);
+      } else if (response.result === "higher") {
+        setLower([value, ...lower]);
+        setMin(+value + 1);
+        setValue("");
+        setMessage(`${value} ist zu niedrig. Versuche eine größere Zahl.`);
+      } else {
+        setMessage("Glückwunsch! Du hast die richtige Zahl erraten!");
+        localStorage.removeItem("game_id");
+        router.push("/")
+      }
+    }  
+  };
+
   const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      if (+value < min) {
-        setMessage(`Die Zahl muss größer oder gleich ${min} sein.`);
-      } else {
-        if (+value > number) {
-          setHigher([value, ...higher]);
-          setMax(+value - 1);
-          setValue("");
-          setMessage(`${value} ist zu hoch. Versuche eine kleinere Zahl.`);
-        } else if (+value < number) {
-          setLower([value, ...lower]);
-          setMin(+value + 1);
-          setValue("");
-          setMessage(`${value} ist zu niedrig. Versuche eine größere Zahl.`);
-        } else {
-          setMessage("Glückwunsch! Du hast die richtige Zahl erraten!");
-        }
-      }
+        handleGuess();
     }
   };
 

@@ -15,15 +15,17 @@ const handleLogin = async (username: string, password: string) => {
   if (result.jwt) {
     localStorage.setItem("accessToken", result.jwt["access token"]);
     localStorage.setItem("refreshToken", result.jwt["refresh token"]);
+    localStorage.removeItem("game_id");
+    localStorage.setItem("username", username);
   } else {
     console.error(result.error);
   }
 };
 
 const handleRefreshToken = async () => {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (refreshToken) {
-    const result = await refreshToken(refreshToken);
+  const rt = localStorage.getItem("refreshToken");
+  if (rt) {
+    const result = await refreshToken(rt);
     if (result.jwt) {
       localStorage.setItem("accessToken", result.jwt["access token"]);
       localStorage.setItem("refreshToken", result.jwt["refresh token"]);
@@ -42,6 +44,8 @@ const handleLogout = async () => {
     if (!result.error) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("game_id");
+      localStorage.removeItem("username");
     } else {
       console.error(result.error);
     }

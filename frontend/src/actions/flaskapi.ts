@@ -8,10 +8,10 @@ interface GameResponse {
 }
 
 interface GuessResponse {
-  message: string;
-  guess: number;
-  result: "too high" | "too low" | "correct";
-  attempts: number;
+  message?: string;
+  guess?: number;
+  result?: "higher" | "lower" | "win";
+  attempts?: number;
   error?: string;
 }
 
@@ -29,7 +29,7 @@ export const startGame = async (token?: string): Promise<GameResponse> => {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await axios.get<GameResponse>(`${API_URL}/start`, {
+    const response = await axios.get<GameResponse>(`${API_URL}/game/start`, {
       headers,
     });
     return response.data;
@@ -46,7 +46,7 @@ export const makeGuess = async (
   number: number
 ): Promise<GuessResponse> => {
   try {
-    const response = await axios.post<GuessResponse>(`${API_URL}/guess`, {
+    const response = await axios.post<GuessResponse>(`${API_URL}/game/guess`, {
       game_id: gameId,
       number: number,
     });
@@ -62,7 +62,7 @@ export const makeGuess = async (
 export const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
   try {
     const response = await axios.post<LeaderboardEntry[]>(
-      `${API_URL}/leaderboard`
+      `${API_URL}/game/leaderboard`
     );
     return response.data;
   } catch (error) {

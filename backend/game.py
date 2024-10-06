@@ -26,7 +26,9 @@ def guess():
 
     if game_id:
         try:
-            return Game.guess(game_id, number)
+            msg = Game.guess(game_id, number)
+            game: Game = Game.query.filter(Game.id==game_id).scalar()
+            return jsonify({"result": msg, "message": "Game guessed successfully", "guess": number, "attempts": game.attempts}), 200 
         except Exception as e:
             return jsonify({"error": str(e)}), 400
     else:

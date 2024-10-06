@@ -28,9 +28,8 @@ const UserDropdown = () => {
         const result = await handleRefreshToken();
         if (result) {
           setIsLoggedIn(result);
-
-          // setUsername(result.username || "Benutzer");
-          // setEmail(result.email || "");
+        
+          setUsername(localStorage.getItem("username") || 'Gast'); 
         }
       } catch (error) {
         console.error("Fehler beim Aktualisieren des Tokens:", error);

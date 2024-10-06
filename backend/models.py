@@ -88,7 +88,7 @@ class Game(db.Model):
     
     @classmethod
     def leaderboard(cls):
-        games: list[Game] = cls.query.filter(cls.finished == True)
+        games: list[Game] = cls.query.filter(cls.finished == True).order_by(cls.attempts.asc()).all()
         jgames = []
         for game in games:
             user: User = User.get_name_by_user(game.user_id)
