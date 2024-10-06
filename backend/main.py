@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from extensions import db, jwt
 from auth import auth_bp
 from game import game_bp
@@ -6,7 +7,7 @@ from models import TokenBlocklist
 
 def create_app():
     app = Flask(__name__)
-
+    CORS(app, origins=["http://localhost:3000"])
     app.config.from_prefixed_env()
     
     db.init_app(app)
