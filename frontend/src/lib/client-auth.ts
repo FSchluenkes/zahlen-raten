@@ -2,7 +2,7 @@
 import { register, login, logout, refreshToken } from "@/actions/auth";
 
 const handleRegister = async (username: string, password: string) => {
-  const result = await register("username", "password");
+  const result = await register(username, password);
   if (result.error) {
     console.error(result.error);
   } else {
@@ -11,7 +11,7 @@ const handleRegister = async (username: string, password: string) => {
 };
 
 const handleLogin = async (username: string, password: string) => {
-  const result = await login("username", "password");
+  const result = await login(username, password);
   if (result.jwt) {
     localStorage.setItem("accessToken", result.jwt["access token"]);
     localStorage.setItem("refreshToken", result.jwt["refresh token"]);
