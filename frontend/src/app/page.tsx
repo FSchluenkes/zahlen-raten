@@ -10,7 +10,7 @@ export default function Home() {
         <h1 className="text-2xl font-bold mb-4 text-black">Willkommen!</h1>
         <WelcomeButton />
       </div>
-      <ThreejsCube />
+      {/* <ThreejsCube /> */}
     </main>
   );
 }

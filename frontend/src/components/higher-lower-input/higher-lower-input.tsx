@@ -69,7 +69,7 @@ export const HigherLowerInput = () => {
       } else {
         setMessage("Glückwunsch! Du hast die richtige Zahl erraten!");
         localStorage.removeItem("game_id");
-        router.push("/")
+        router.push("/guesser/win");
       }
     }  
   };
