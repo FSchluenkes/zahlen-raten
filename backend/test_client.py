@@ -118,21 +118,33 @@ class TestAuthGameApp(unittest.TestCase):
             'number': game.number - 1  
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'higher', response.data)
+        response_json = response.get_json()
+        self.assertEqual(response_json['result'], 'higher')
+        self.assertEqual(response_json['message'], 'Game guessed successfully')
+        self.assertEqual(response_json['guess'], game.number - 1)
+        self.assertEqual(response_json['attempts'], 1)
 
         response = self.client.post('/game/guess', json={
             'game_id': game_id,
             'number': game.number + 1  
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'lower', response.data)
+        response_json = response.get_json()
+        self.assertEqual(response_json['result'], 'lower')  # Expecting 'lower' result
+        self.assertEqual(response_json['message'], 'Game guessed successfully')
+        self.assertEqual(response_json['guess'], game.number + 1)
+        self.assertEqual(response_json['attempts'], 2)
 
         response = self.client.post('/game/guess', json={
             'game_id': game_id,
             'number': game.number  
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'win', response.data)
+        response_json = response.get_json()
+        self.assertEqual(response_json['result'], 'win')  # Expecting 'win' result
+        self.assertEqual(response_json['message'], 'Game guessed successfully')
+        self.assertEqual(response_json['guess'], game.number)
+        self.assertEqual(response_json['attempts'], 3)
 
         with self.app.app_context():
           game: Game = Game.query.filter(Game.id == game_id).scalar()
