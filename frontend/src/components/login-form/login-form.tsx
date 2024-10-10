@@ -25,6 +25,7 @@ export default function AuthForm() {
         await handleLogin(username, password);
       } else {
         await handleRegister(username, password);
+        await handleLogin(username, password);
       }
       setIsLoading(false);
       router.push("/guesser");

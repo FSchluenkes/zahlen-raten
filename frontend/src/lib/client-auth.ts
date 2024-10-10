@@ -4,7 +4,7 @@ import { register, login, logout, refreshToken } from "@/actions/auth";
 const handleRegister = async (username: string, password: string) => {
   const result = await register(username, password);
   if (result.error) {
-    console.error(result.error);
+    throw new Error(result.error);
   } else {
     console.log(result.message);
   }
@@ -18,7 +18,7 @@ const handleLogin = async (username: string, password: string) => {
     localStorage.removeItem("game_id");
     localStorage.setItem("username", username);
   } else {
-    console.error(result.error);
+    throw new Error(result.error);
   }
 };
 
