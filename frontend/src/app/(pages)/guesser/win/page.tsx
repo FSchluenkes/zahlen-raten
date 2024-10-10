@@ -23,11 +23,11 @@ const Win = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-40 bg-white rounded-2xl">
-      <h1>Du hast gewonnen!</h1>
+      <h1 className="text-2xl font-bold">Du hast gewonnen!</h1>
 
-      <p>Du wirst in {time} Sekunden wieder ein neues Spiel starten können.</p>
+      <p className="text-2xl font-bold">Du wirst in {time} Sekunden wieder ein neues Spiel starten können.</p>
       <Separator className="my-4" />
-      <Button onClick={() => router.push("/guesser")}>Neue Runde</Button>
+      <Button onClick={() => router.push("/guesser")} className="text-2xl font-bold">Neue Runde</Button>
     </div>
   );
 };
